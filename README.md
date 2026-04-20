@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Boilerplate Supabase Connection
 
-## Getting Started
+Boilerplate with both client-side and server-side Supabase setup for Next.js App Router, aligned with RLS-first best practices.
 
-First, run the development server:
+## Included
+
+- Browser Supabase client for auth/UI data (`lib/supabase/client.ts`)
+- Server Supabase client for route handlers/server components (`lib/supabase/server.ts`)
+- Optional admin client pattern (service role, server-only) (`lib/supabase/server.ts`)
+- Environment validation helpers (`lib/supabase/env.ts`)
+- Demo client usage (`components/supabase-client-status.tsx`)
+- Demo server route (`app/api/supabase/server-check/route.ts`)
+
+## Environment Variables
+
+1. Copy `.env.example` to `.env.local`
+2. Fill in values from your Supabase project:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Legacy compatibility:
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` is also accepted if you use older Supabase naming.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Security notes:
+- `NEXT_PUBLIC_*` values are safe for the browser.
+- `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
+- Never use service role key in client components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Boilerplate Usage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Server-side check in page render uses `getSupabaseServerClient()`.
+- Client-side check button uses `getSupabaseBrowserClient()`.
+- API route check endpoint: `GET /api/supabase/server-check`.
 
-## Deploy on Vercel
+## Best Practice Direction
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Keep business logic and external API calls on server routes/actions.
+- Use browser Supabase client only for UI/auth/simple CRUD.
+- Enforce authorization in Supabase RLS policies, not in frontend checks.
